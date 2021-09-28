@@ -331,7 +331,7 @@ class RevaController extends Controller {
 			error_log(json_encode($resourceInfos));
 			return new JSONResponse($resourceInfos, 200);
 		} else {
-			return new JSONResponse(["error" => "Folder not found"], 400);
+			return new JSONResponse(["error" => "Folder not found"], 404);
 		}
 	}
 
