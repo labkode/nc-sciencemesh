@@ -83,25 +83,39 @@ class ScienceMeshShareTest extends PHPUnit_Framework_TestCase {
 		$share->setScienceMeshCreator($creator);
 		$this->assertEquals($creator, $share->getScienceMeshCreator());
 	}
+	
+	public function testScienceMeshCTime() {
+		$share = new ScienceMeshShare();
+		$share->setScienceMeshCTime(1234567890);
+		$this->assertEquals($share->getScienceMeshCTime(), 1234567890);
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setScienceMeshCTime('deadbeef');
+	}
+
+	public function testScienceMeshMTime() {
+		$share = new ScienceMeshShare();
+		$share->setScienceMeshMTime(1234567890);
+		$this->assertEquals($share->getScienceMeshMTime(), 1234567890);
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setScienceMeshMTime('deadbeef');
+	}
+
+	public function testShareProvider() {
+		$share = new ScienceMeshShare();
+		$share->setProviderId('providerid')
+			->setId('internalid');
+		$this->assertEquals($share->getFullId(),'providerid:internalid');
+		$this->expectException(IllegalIDChangeException::class);
+		$share->setProviderId('diredivorp');
+	}
+
+	public function testShareProviderInvalidArgument() {
+		$share = new ScienceMeshShare();
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setProviderId(['answer' => 42]);
+	}
+
 	/*
-		public function testScienceMeshCtime() {  //TODO
-
-		}
-
-		public function testScienceMeshMtime() {  //TODO
-			return(false);
-		}
-
-		/*
-
-			public function testShareId() {  //TODO
-				return(false);
-			}
-
-			public function testShareFullId() {  //TODO
-				return(false);
-			}
-
 			public function testShareNode() {  //TODO
 				return(false);
 			}

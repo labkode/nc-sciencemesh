@@ -65,6 +65,36 @@ class ScienceMeshShare {
 	public function getScienceMeshCreator() {
 		return $this->scienceMeshCreator;
 	}
+	
+	public function setScienceMeshCTime($ctime) {
+		if(!is_integer($ctime)){
+			throw new \InvalidArgumentException(
+				__CLASS__ .
+				": ctime has to be an integer."
+			);
+		} else {
+			$this->scienceMeshCTime = $ctime;
+		}
+	}
+
+	public function getScienceMeshCTime() {
+		return $this->scienceMeshCTime;
+	}
+
+	public function setScienceMeshMtime($mtime) {
+		if(!is_integer($mtime)){
+			throw new \InvalidArgumentException(
+				__CLASS__ .
+				": mtime has to be an integer."
+			);
+		} else {
+			$this->scienceMeshMTime = $mtime;
+		}
+	}
+
+	public function getScienceMeshMTime() {
+		return $this->scienceMeshMTime;
+	}
 
 	public function setId($id) {
 		if (!is_string($id)) {
@@ -72,19 +102,40 @@ class ScienceMeshShare {
 				__CLASS__ .
 				": Id has to be of type String."
 			));
-		} elseif ($this->id != null) {
+		} elseif (isset($this->id)) {
 			throw(new IllegalIDChangeException(
 				__CLASS__ .
 				": It is only allowed to set the internal id of a share once."
 			));
 		} else {
 			$this->id = $id;
-			return $this;
 		}
+		return $this;
 	}
 
 	public function getId() {
 		return $this->id;
+	}
+
+	public function setProviderId($id) {
+		if(!is_string($id)){
+			throw(new \InvalidArgumentException(
+				__CLASS__ .
+				": ProviderId has to be of type String."
+			));
+		} elseif (isset($this->providerId)) {
+			throw(new IllegalIDChangeException(
+				__CLASS__ .
+				": It is only allowed to set the provider id of a share once."
+			));
+		} else {
+			$this->providerId = $id;
+		}
+		return $this;
+	}
+
+	public function getFullId() {
+		return $this->providerId . ':' . $this->id;
 	}
 
 	public function setNode(Node $node) {
