@@ -12,18 +12,12 @@ use OCP\Share\Exceptions\IllegalIDChangeException;
 class ScienceMeshShareTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 	}
-	/*
-		public function testFromJson() {  //TODO
-			return(false);
-		}
-		*/
-
 	public function testScienceMeshId() {
 		$share = new ScienceMeshShare();
-		$share->setScienceMeshId('deadbeef');
-		$this->assertEquals($share->getScienceMeshId(), 'deadbeef');
+		$share->setScienceMeshId(1337);
+		$this->assertEquals($share->getScienceMeshId(), '1337');
 		$this->expectException(IllegalIDChangeException::class);
-		$share->setScienceMeshId('decafbad');
+		$share->setScienceMeshId('deadbeef');
 	}
 
 	public function testScienceMeshIdInvalidId() {
@@ -45,12 +39,22 @@ class ScienceMeshShareTest extends PHPUnit_Framework_TestCase {
 			->willReturn(1);
 		$share->setNode($node);
 		$this->assertEquals($share->getNode(), $node);
+		$this->assertEquals($node->getId(), $share->getNodeId());
+		$this->assertEquals($share->getNodeType(), 'folder');
 		$node->method("getId")
 			->will($this->throwException(new NotFoundException()));
+		$share->setNodeId(2);
+		$share->setNodeType('file');
+		$this->assertEquals($share->getNodeId(), 2);
+		$this->assertEquals($share->getNodeType(), 'file');
 		$this->expectException(NotFoundException::class);
 		$share->getNode($node);
 	}
-
+	public function testSetInvalidNodeType() {
+		$share = new ScienceMeshShare();
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setNodeType('notafileorfolder');
+	}
 
 	public function testScienceMeshPermissions() {
 		$permissions = $this->getMockBuilder("OCA\ScienceMesh\Share\ScienceMeshSharePermissions")->disableOriginalConstructor()->getMock();
@@ -109,90 +113,149 @@ class ScienceMeshShareTest extends PHPUnit_Framework_TestCase {
 		$share->setProviderId('diredivorp');
 	}
 
+	public function testShareProviderWithMissingData() {
+		$share = new ScienceMeshShare();
+		$share->setProviderId('providerid');
+		$this->expectException(\UnexpectedValueException::class);
+		$share->getFullId();
+	}
+
 	public function testShareProviderInvalidArgument() {
 		$share = new ScienceMeshShare();
 		$this->expectException(\InvalidArgumentException::class);
 		$share->setProviderId(['answer' => 42]);
 	}
 
-	/*
-			public function testShareNode() {  //TODO
-				return(false);
-			}
+	public function testShareType() {
+		$share = new ScienceMeshShare();
+		$share->setShareType(42);
+		$this->assertEquals($share->getShareType(), 42);
+	}
 
-			public function testShareType() {  //TODO
-				return(false);
-			}
+	public function testSharedWith() {
+		$share = new ScienceMeshShare();
+		$share->setSharedWith('whatever, a string i guess');
+		$this->assertEquals($share->getSharedWith(), 'whatever, a string i guess');
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setSharedWith(['not a' => 'string']);
+	}
 
-			public function testSharedWith() {  //TODO
-				return(false);
-			}
+	public function testSharedWithDisplayName() {
+		$share = new ScienceMeshShare();
+		$share->setSharedWithDisplayName('whatever, a string i guess');
+		$this->assertEquals($share->getSharedWithDisplayName(), 'whatever, a string i guess');
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setSharedWithDisplayName(['not a' => 'string']);
+	}
 
-			public function testSharedWithDisplayName() {  //TODO
-				return(false);
-			}
+	public function testSharedWithAvatar() {
+		$share = new ScienceMeshShare();
+		$share->setSharedWithAvatar('whatever, a string i guess');
+		$this->assertEquals($share->getSharedWithAvatar(), 'whatever, a string i guess');
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setSharedWithAvatar(['not a' => 'string']);
+	}
 
-			public function testSharedWithAvatar() {  //TODO
-				return(false);
-			}
+	public function testSharePermisions() {
+		$share = new ScienceMeshShare();
+		$share->setPermissions(42);
+		$this->assertEquals($share->getPermissions(),42);
+	}
 
-			public function testSharePermisions() {  //TODO
-				return(false);
-			}
+	public function testShareStatus() {
+		$share = new ScienceMeshShare();
+		$share->setStatus(42);
+		$this->assertEquals($share->getStatus(), 42);
+	}
 
-			public function testShareStatus() {  //TODO
-				return(false);
-			}
+	public function testShareNote() {
+		$share = new ScienceMeshShare();
+		$this->assertEquals($share->getNote(), '');
+		$share->setNote('notice me, senpai');
+		$this->assertEquals($share->getNote(), 'notice me, senpai');
+		$share->setNote(1);
+		$this->assertEquals($share->getNote(), '');
+	}
 
-			public function testShareNote() {  //TODO
-				return(false);
-			}
+	public function testShareExpirationDate() {
+		$share = new ScienceMeshShare();
+		$date = getdate(time() - 1);
+		$share->setExpirationDate($date);
+		$this->assertEquals($share->getExpirationDate(), $date);
+		$this->assertTrue($share->isExpired());
+	}
 
-			public function testShareExpirationDate() {  //TODO
-				return(false);
-			}
+	public function testShareLabel() {
+		$share = new ScienceMeshShare();
+		$share->setLabel('once you label me, you negate me');
+		$this->assertEquals($share->getLabel(), 'once you label me, you negate me');
+	}
 
-			public function testShareLabel() {  //TODO
-				return(false);
-			}
+	public function testSharedBy() {
+		$share = new ScienceMeshShare();
+		$share->setSharedBy('sharer');
+		$this->assertEquals($share->getSharedBy(), 'sharer');
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setSharedBy(['not a' => 'string']);
+	}
 
-			public function testSharedBy() {  //TODO
-				return(false);
-			}
+	public function testShareOwner() {
+		$share = new ScienceMeshShare();
+		$share->setShareOwner('owner');
+		$this->assertEquals($share->getShareOwner(), 'owner');
+		$this->expectException(\InvalidArgumentException::class);
+		$share->setShareOwner(['not a' => 'string']);
+	}
 
-			public function testShareOwner() {  //TODO
-				return(false);
-			}
+	public function testSharePassword() {
+		$share = new ScienceMeshShare();
+		$share->setPassword('secret');
+		$this->assertEquals($share->getPassword(), 'secret');
+	}
 
-			public function testSharePassword() {  //TODO
-				return(false);
-			}
+	public function testShareSendPasswordByTalk() {
+		$share = new ScienceMeshShare();
+		$this->assertFalse($share->getSendPasswordByTalk());
+		$share->setSendPasswordByTalk(true);
+		$this->assertTrue($share->getSendPasswordByTalk());
+	}
 
-			public function testShareSendPasswordByTalk() {  //TODO
-				return(false);
-			}
+	public function testShareToken() {
+		$share = new ScienceMeshShare();
+		$share->setToken('token');
+		$this->assertEquals($share->getToken(), 'token');
+	}
 
-			public function testShareToken() {  //TODO
-				return(false);
-			}
+	public function testShareTarget() {
+		$share = new ScienceMeshShare();
+		$share->setTarget('target');
+		$this->assertEquals($share->getTarget(), 'target');
+	}
 
-			public function testShareTarget() {  //TODO
-				return(false);
-			}
+	public function testShareTime() {
+		$share = new ScienceMeshShare();
+		$time = new \DateTime();
+		$share->setShareTime($time);
+		$this->assertEquals($share->getShareTime(), $time);
+	}
 
-			public function testShareTime() {  //TODO
-				return(false);
-			}
+	public function testShareMailSend() {
+		$share = new ScienceMeshShare();
+		$share->setMailSend(true);
+		$this->assertTrue($share->getMailSend());
+	}
 
-			public function testShareMailSend() {  //TODO
-				return(false);
-			}
+	public function testShareNodeCacheEntry() {
+		$share = new ScienceMeshShare();
+		$cacheentry = $this->getMockBuilder('OCP\Files\Cache\ICacheEntry')->getMock();
+		$share->setNodeCacheEntry($cacheentry);
+		$this->assertEquals($share->getNodeCacheEntry(), $cacheentry);
+	}
 
-			public function testShareNodeCacheEntry() {  //TODO
-				return(false);
-			}
-
-			public function testShareHideDownload() {  //TODO
-				return(false);
-			}*/
+	public function testShareHideDownload() {
+		$share = new ScienceMeshShare();
+		$this->assertFalse($share->getHideDownload());
+		$share->setHideDownload(true);
+		$this->assertTrue($share->getHideDownload());
+	}
 }
