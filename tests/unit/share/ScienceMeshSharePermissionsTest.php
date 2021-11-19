@@ -4,6 +4,7 @@ namespace OCA\ScienceMesh\Tests\Unit\Share;
 
 use PHPUnit_Framework_TestCase;
 
+
 use OCA\ScienceMesh\Share\ScienceMeshSharePermissions;
 
 class ScienceMeshSharePermissionsTest extends PHPUnit_Framework_TestCase {
@@ -120,5 +121,19 @@ class ScienceMeshSharePermissionsTest extends PHPUnit_Framework_TestCase {
 		$permissions = new ScienceMeshSharePermissions;
 		$this->expectException(\UnexpectedValueException::class);
 		$permissions->getPermission('notarealpermissiontype');
+	}
+	public function testGetOCSPermissions() {
+		$permissions = new ScienceMeshSharePermissions;
+		$this->assertEquals($permissions->getOCSPermissions(), 0);
+		$permissions->setPermission('initiate_file_download', true);
+		$this->assertEquals($permissions->getOCSPermissions(), \OCP\Constants::PERMISSION_READ);
+		$permissions->setPermission('move', true);
+		$this->assertEquals($permissions->getOCSPermissions(), \OCP\Constants::PERMISSION_READ | \OCP\Constants::PERMISSION_CREATE | \OCP\Constants::PERMISSION_DELETE);
+		$permissions->setPermission('list_recycle', true);
+		$this->assertEquals($permissions->getOCSPermissions(), \OCP\Constants::PERMISSION_READ | \OCP\Constants::PERMISSION_CREATE | \OCP\Constants::PERMISSION_DELETE | \OCP\Constants::PERMISSION_SHARE);
+		$permissions->setPermission('update_grant', true);
+		$this->assertEquals($permissions->getOCSPermissions(), \OCP\Constants::PERMISSION_READ | \OCP\Constants::PERMISSION_CREATE | \OCP\Constants::PERMISSION_DELETE | \OCP\Constants::PERMISSION_SHARE | \OCP\Constants::PERMISSION_UPDATE);
+		$permissions->setPermission('move', false);
+		$this->assertEquals($permissions->getOCSPermissions(), \OCP\Constants::PERMISSION_READ | \OCP\Constants::PERMISSION_SHARE | \OCP\Constants::PERMISSION_UPDATE);
 	}
 }
