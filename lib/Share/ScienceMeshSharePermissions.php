@@ -112,20 +112,20 @@ class ScienceMeshSharePermissions {
 
 	public function getOCSPermissions() {
 		$permissionsCode = 0;
-		if ($get_path || $get_quota || $initiate_file_download || $initiate_file_upload || $stat) {
-			$permissionsCode += PERMISSION_READ;
+		if ($this->get_path || $this->get_quota || $this->initiate_file_download || $this->initiate_file_upload || $this->stat) {
+			$permissionsCode += \OCP\Constants::PERMISSION_READ;
 		}
-		if ($create_container || $move || $add_grant || $restore_file_version || $restore_recycle_item) {
-			$permissionsCode += PERMISSION_CREATE;
+		if ($this->create_container || $this->move || $this->add_grant || $this->restore_file_version || $this->restore_recycle_item) {
+			$permissionsCode += \OCP\Constants::PERMISSION_CREATE;
 		}
-		if ($move || $delete || $remove_grant) {
-			$permissionsCode += PERMISSION_DELETE;
+		if ($this->move || $this->delete || $this->remove_grant) {
+			$permissionsCode += \OCP\Constants::PERMISSION_DELETE;
 		}
-		if ($list_grants || $list_file_versions || $list_recycle) {
-			$permissionsCode += PERMISSION_SHARE;
+		if ($this->list_grants || $this->list_file_versions || $this->list_recycle) {
+			$permissionsCode += \OCP\Constants::PERMISSION_SHARE;
 		}
-		if ($update_grant) {
-			$permissionsCode += PERMISSION_UPDATE;
+		if ($this->update_grant) {
+			$permissionsCode += \OCP\Constants::PERMISSION_UPDATE;
 		}
 		return $permissionsCode;
 	}
