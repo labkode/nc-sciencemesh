@@ -21,14 +21,14 @@ script("sciencemesh", "vendor/simplyedit/simply.everything");
 						<span class="app-content-list-item-details"><?php echo $_['invite_token']['expiration']['seconds'] ?> left</span>
 						<!--<div class="app-content-list-item-line-two">Copy to clipboard</div>-->
 					</div>
-					<!--<div href="#" class="app-content-list-item">
+					<div href="#" class="app-content-list-item">
 						<div class="app-content-list-item-icon" style="background-color: rgb(31, 72, 96);">+</div>
-						<div class="app-content-list-item-line-one">Generate a new token</div>
+						<div class="app-content-list-item-line-one" id="elem">Generate a new token</div>
 						<div class="app-content-list-item-line-two">Tokens are valid for 24 hours</div>
 						<div class="app-content-list-item-menu">
 							<div class="icon-add"></div>
 						</div>
-					</div>-->
+					</div>
 				</div>
 				<div class="app-content-detail">
 					<div class="section">
